@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/material.dart';
@@ -23,10 +24,9 @@ class _CallPageState extends State<CallPage> {
   bool muted = false;
   bool viewPanel = false;
   late RtcEngine _engine;
-
+  bool isOn = false;
   @override
   void initState() {
-    log(token.toString(), name: 'TOKEN');
     initialize();
     super.initState();
   }
@@ -73,7 +73,6 @@ class _CallPageState extends State<CallPage> {
             () {
               final info = 'Error: $e';
               _infoStrings.add('onError: $info');
-              log(e.toString(), name: "onError");
             },
           );
         },
@@ -81,9 +80,6 @@ class _CallPageState extends State<CallPage> {
           setState(() {
             final info = 'onJoinChannel: $uid';
             _infoStrings.add('onJoinChannel: $info');
-            log(info.toString(), name: "onJoinChannelSuccess");
-
-            log(count.toString());
           });
         },
         userJoined: (uid, elapsed) {
@@ -109,9 +105,6 @@ class _CallPageState extends State<CallPage> {
           setState(() {
             final info = 'FirstRemoteVideo: $remoteUid ${width}x $height';
             _infoStrings.add(info);
-            log(info.toString(), name: "onFirstRemoteVideoFrame");
-            log(width.toString(), name: "onFirstRemoteVideoFrame");
-            log(height.toString(), name: "onFirstRemoteVideoFrame");
           });
         },
       ),
@@ -265,6 +258,26 @@ class _CallPageState extends State<CallPage> {
             IconButton(
               onPressed: () {
                 setState(() {
+                  isOn = !isOn;
+                });
+                if (isOn) {
+                  Future.delayed(
+                    Duration(
+                      seconds: 2,
+                    ),
+                    () {
+                      showToast('_______****************____*__');
+                      speechToText();
+                    },
+                  );
+                }
+              },
+              icon: Icon(
+                  isOn ? Icons.closed_caption : Icons.closed_caption_outlined),
+            ),
+            IconButton(
+              onPressed: () {
+                setState(() {
                   viewPanel = !viewPanel;
                 });
               },
@@ -304,5 +317,21 @@ class _CallPageState extends State<CallPage> {
     _users.clear();
     _engine.leaveChannel();
     super.dispose();
+  }
+
+  Future showToast(String msg) async {
+    Fluttertoast.showToast(msg: '_____________&&&&&&&&&******************');
+    for (int i = 0; i < 3; i++) {
+      Fluttertoast.showToast(msg: generateRandomString(i * 7));
+    }
+  }
+
+  String generateRandomString(int length) {
+    final random = Random();
+    const availableChars = '!~@#%^&*()_+=}{|}';
+    final randomString = List.generate(length,
+            (index) => availableChars[random.nextInt(availableChars.length)])
+        .join();
+    return randomString;
   }
 }
