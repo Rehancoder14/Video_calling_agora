@@ -16,10 +16,18 @@ class IndexPage extends StatefulWidget {
 
 class _IndexPageState extends State<IndexPage> {
   final channelController = TextEditingController();
-  final tokenController = TextEditingController();
+  TextEditingController tokenController = TextEditingController();
+
   bool validator = false;
   ClientRole clientRole = ClientRole.Broadcaster;
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    tokenController.text = token;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -176,7 +184,7 @@ class _IndexPageState extends State<IndexPage> {
                             foregroundColor: Colors.white),
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            token = tokenController.text;
+                            // token = tokenController.text;
                             await _handleCameraAndMic(
                               Permission.camera,
                             );
